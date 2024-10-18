@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <!-- adds a simulation of object detection and segmentation camera sensor to the robot
+        
+        Usage: 
+        Has to be included into the robot description by xacro include. 
+		
+		Arguments:
+          extension_length: the extenson length
+    -->
+	<xacro:macro name="camera_object_sensor" params="parent topic id xyz rpy extension_length">
+
+        <!-- links -->
+
+        <link name="camera_${id}_link">
+            <!-- TODO: make the camera model pretty -->
+            <visual>
+                <geometry>
+                    <box size="0.010 0.03 0.03"/>
+                </geometry>
+            </visual>
+            <!-- TODO: add inertial properties -->
+        </link>
+
+        <link name="camera_${id}_link_optical"></link>
+
+        <!-- joints -->
+        
+        <joint name="${parent}_camera_${id}_joint" type="fixed">
+            <parent link="${parent}"/>
+            <child link="camera_${id}_link"/>
+        <origin xyz="${xyz}" rpy="${rpy}"/>
+        </joint>
+
+        <!-- optical format (image rotated by pi/2)-->
+        <joint name="${parent}_camera_optical_${id}_joint" type="fixed">
+            <parent link="camera_${id}_link"/>
+            <child link="camera_${id}_link_optical"/>
+            <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        </joint>
+
+        <!-- sensor -->
+        <gazebo reference="camera_${id}_link">
+            <material>STIHL/DarkGrey</material>
+            <visualize>true</visualize>
+            <sensor name="camera_${id}" type="camera">
+                <pose> 0 0 0 0 0 0 </pose>
+                <plugin name="camera_${id}" filename="libobject_camera_plugin.so">
+                    <frame_name>camera_${id}_link_optical</frame_name>
+                    <ros>
+                        <remapping>~/camera_camera/image_raw:=${topic}/image_raw</remapping>
+                        <remapping>~/camera/polygon:=${topic}/polygon</remapping>
+                    </ros>
+                </plugin>
+            </sensor>
+        </gazebo>
+	</xacro:macro>
+
+</robot>

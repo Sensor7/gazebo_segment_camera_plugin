@@ -1,0 +1,39 @@
+sensor_position:
+  xyz: "0.5 0.0 0.25"    # the positon of the camera relative to the base
+  rpy: "0.0 0.0 0"    # the orientation of the camera
+
+sensor_configuration:
+  width: 640            # resolution x (horizontal) in pixels
+  height: 480           # resolution y (vertical) in pixels
+  horizontal_fov: 1.089  # horizontal field of view
+  clip_near: 0.05       # sensor range min in m
+  clip_far: 50.0         # sensor range max in m
+  update_rate: 10       # sampling frequency in hz
+  topic: "/camera"      # topic name
+
+sensor_noise:           # modeled as gaussian
+  mean: 0.0             # mean of the distribution
+  stddev: 0.007         # standard deviation of the distribution
+
+gazebo_configuration:
+  visualize: true       # visualize teh sensor in gazebo
+
+# You can use this yaml by importing it through xacro with the following:
+ # <!-- camera setup -->
+ # <xacro:property name="camera_config_file" value="$(find tasm)/config/camera.yaml" />
+ # <xacro:property name="camera_config" value="${xacro.load_yaml(camera_config_file)}" />
+
+ # <xacro:camera_sensor parent="${base_link_name}_link" 
+ #                      id="camera" 
+ #                      topic="${camera_config['sensor_configuration']['topic']}" 
+ #                      xyz="${camera_config['sensor_position']['xyz']}" 
+ #                      rpy="${camera_config['sensor_position']['rpy']}" 
+ #                      width="${camera_config['sensor_configuration']['width']}" 
+ #                      height="${camera_config['sensor_configuration']['height']}" 
+ #                      horizontal_fov="${camera_config['sensor_configuration']['horizontal_fov']}"
+ #                      clip_near="${camera_config['sensor_configuration']['clip_near']}"
+ #                      clip_far="${camera_config['sensor_configuration']['clip_far']}"
+ #                      update_rate="${camera_config['sensor_configuration']['update_rate']}"
+ #                      mean="${camera_config['sensor_noise']['mean']}"
+ #                      stddev="${camera_config['sensor_noise']['stddev']}"
+ #                      visualize="${camera_config['gazebo_configuration']['visualize']}" />
